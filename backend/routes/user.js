@@ -17,8 +17,8 @@ const signupBody = zod.object({
 router.post("/signup", async (req, res) => {
     const { success } = signupBody.safeParse(req.body)
     if (!success){
-        return res.status(411).json({
-            message: "Email already taken / Incorrect inputs"
+        return res.status(404).json({
+            message: "not found"
         })
     }
     const existingUser = await User.findOne({
