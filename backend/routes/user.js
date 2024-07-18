@@ -135,5 +135,50 @@ router.get("/bulk", async (req, res) => {
     })
 });
 
+router.post("/signup", async (req, res) => {
+    const { success } = signupBody.safeParse(req.body)
+    if (!success) {
+        return res.status(411).json({
+            message: "Email already taken / incorrect inputs"        
+        })
+}
+
+    const existingUser = await User.findOne({ username: req.body.username })
+
+    if (existingUser){
+        res.status(411).json({
+            message: "Email already taken / Incorrect inputs"
+        })
+    }
+
+    const user = await User.create({
+        username: req.body.username,
+        firstNmae: req.body.firstName,
+        lastName: req.body.lastName,
+        password: req.body.password
+    })
+
+    const userTd = user._id;
+
+    // creating new acount
+
+await Account.create({
+    iserId,
+    balance: 1 + Math.random() * 10000
+})
+
+
+///---------------------
+
+
+const token = jwt.sign({
+    userId,
+    }, JWT_SECRET);
+
+res.json({
+    message: "User created successfully",
+    token: token
+})
+})
 
 module.exports = router;
